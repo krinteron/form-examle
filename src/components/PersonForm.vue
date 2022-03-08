@@ -3,7 +3,10 @@
     <div class="person">
       <p class="title">Персональные данные</p>
       <div class="input-form flex-container">
-        <div class="input-form-item input-name">
+        <div
+          class="input-form-item input-name"
+          :class="errors.person && !errors.person.name && 'invalid'"
+        >
           <label for="name">
             <p class="input-label">Имя</p>
             <input
@@ -14,7 +17,10 @@
             />
           </label>
         </div>
-        <div class="input-form-item input-age">
+        <div
+          class="input-form-item input-age"
+          :class="errors.person && !errors.person.age && 'invalid'"
+        >
           <label for="age">
             <p class="input-label">Возраст</p>
             <input
@@ -50,7 +56,7 @@
         >
           <div
             class="input-form-item input-name"
-            :class="errors.includes(child.id) && 'invalid'"
+            :class="errors[child.id] && !errors[child.id].name && 'invalid'"
           >
             <label for="name">
               <p class="input-label">Имя</p>
@@ -64,7 +70,7 @@
           </div>
           <div
             class="input-form-item input-age"
-            :class="errors.includes(child.id) && 'invalid'"
+            :class="errors[child.id] && !errors[child.id].age && 'invalid'"
           >
             <label for="age">
               <p class="input-label">Возраст</p>
@@ -92,16 +98,17 @@ export default {
     return {
       personData: {},
       childrenData: {},
-      errors: [],
+      errors: {},
+      newData: {},
     };
   },
   beforeMount() {
-    this.personData = this.$store.state.person;
-    this.childrenData = this.$store.state.children;
+    this.importData();
   },
   methods: {
-    importChildren() {
-      this.childrenData = this.$store.state.children;
+    importData() {
+      this.personData = JSON.parse(JSON.stringify(this.$store.state.person));
+      this.childrenData = JSON.parse(JSON.stringify(this.$store.state.children));
     },
     addChild() {
       const id = Math.random().toString(16).slice(2);
@@ -112,23 +119,29 @@ export default {
       };
       this.childrenData[id] = newChild;
     },
-    saveForm() {
-      this.errors.length = 0;
-      const newChildren = {};
+    validate() {
+      this.errors = {};
+      this.newData = {};
       Object.values(this.childrenData)
         .forEach((child) => {
-          if (child.name && child.age) newChildren[child.id] = child;
+          if (child.name && child.age) this.newData[child.id] = child;
           if (!child.name && !child.age) return;
           if (!child.name || !child.age) {
-            this.errors.push(child.id);
+            this.errors[child.id] = { ...child };
           }
         });
-      if (!this.errors.length) {
+      if (!this.personData.name || !this.personData.age) {
+        this.errors.person = { ...this.personData };
+      }
+    },
+    saveForm() {
+      this.validate();
+      if (!Object.keys(this.errors).length) {
         this.$store.commit('saveForm', {
           personData: this.personData,
-          childrenData: newChildren,
+          childrenData: this.newData,
         });
-        this.importChildren();
+        this.importData();
       }
     },
   },

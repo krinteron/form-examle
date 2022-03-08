@@ -3,7 +3,9 @@
     <div class="person">
       <p class="title">Персональные данные</p>
       <p class="person-item">
-        {{ $store.state.person.name }}, {{ getAge($store.state.person.age) }}
+        <span v-if="$store.state.person.name">
+          {{ $store.state.person.name }}, {{ getAge($store.state.person.age) }}
+        </span>
       </p>
     </div>
     <div class="children">
