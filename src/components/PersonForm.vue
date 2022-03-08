@@ -3,50 +3,27 @@
     <div class="person">
       <p class="title">Персональные данные</p>
       <div class="input-form flex-container">
-        <div
-          class="input-form-item input-name"
+        <InputComponent
+          v-model="personData.name"
+          label="Имя"
+          type="text"
           :class="errors.person && !errors.person.name && 'invalid'"
-        >
-          <label for="name">
-            <p class="input-label">Имя</p>
-            <input
-              v-model="personData.name"
-              class="input"
-              type="text"
-              id="name"
-            />
-          </label>
-        </div>
-        <div
-          class="input-form-item input-age"
+        />
+        <InputComponent
+          v-model="personData.age"
+          label="Возраст"
+          type="number"
           :class="errors.person && !errors.person.age && 'invalid'"
-        >
-          <label for="age">
-            <p class="input-label">Возраст</p>
-            <input
-              v-model="personData.age"
-              class="input"
-              type="number"
-              id="age"
-            />
-          </label>
-        </div>
+        />
       </div>
     </div>
     <div class="children">
       <div class="flex-container title-wrapper">
         <span class="">Дети (макс. 5)</span>
-        <button
-          class="add-btn flex-container"
+        <ChildAddButton
+          @touch="addChild"
           :class="(Object.keys(childrenData).length > 4) && 'hidden'"
-          @click="addChild"
-        >
-          <span class="plus-wrapper">
-            <div class="plus-horizontal"></div>
-            <div class="plus-vertical"></div>
-          </span>
-          <span class="add-btn-label">Добавить ребенка</span>
-        </button>
+        />
       </div>
       <div class="input-form flex-container">
         <div
@@ -54,34 +31,18 @@
           v-for="child in childrenData"
           :key="child.id"
         >
-          <div
-            class="input-form-item input-name"
+          <InputComponent
+            v-model="childrenData[child.id].name"
+            label="Имя"
+            type="text"
             :class="errors[child.id] && !errors[child.id].name && 'invalid'"
-          >
-            <label for="name">
-              <p class="input-label">Имя</p>
-              <input
-                v-model="childrenData[child.id].name"
-                class="input"
-                type="text"
-                id="name"
-              />
-            </label>
-          </div>
-          <div
-            class="input-form-item input-age"
+          />
+          <InputComponent
+            v-model="childrenData[child.id].age"
+            label="Возраст"
+            type="number"
             :class="errors[child.id] && !errors[child.id].age && 'invalid'"
-          >
-            <label for="age">
-              <p class="input-label">Возраст</p>
-              <input
-                v-model="childrenData[child.id].age"
-                class="input"
-                type="number"
-                id="age"
-              />
-            </label>
-          </div>
+          />
           <a href="#" class="remove-btn" @click="delete childrenData[child.id]">Удалить</a>
         </div>
       </div>
@@ -93,7 +54,14 @@
 </template>
 
 <script>
+import InputComponent from '@/components/InputComponent.vue';
+import ChildAddButton from '@/components/ChildAddButton.vue';
+
 export default {
+  components: {
+    InputComponent,
+    ChildAddButton,
+  },
   data() {
     return {
       personData: {},
@@ -176,39 +144,9 @@ export default {
   flex-direction: column;
   gap: 10px;
 }
-.input-form-item {
-  box-sizing: border-box;
-  border: 1px solid #F1F1F1;
-  border-radius: 4px;
-  height: 56px;
-  padding: 6px 16px;
-  text-align: left;
-}
 .children
 .input-form-item {
   width: 260px;
-}
-.input-label {
-  display: inline-block;
-
-  font-size: 13px;
-  color: #1111117A;
-  margin: 2px 0;
-}
-.input {
-  box-sizing: border-box;
-  width: 100%;
-  height: 24px;
-  border: none;
-  outline: none;
-
-  font-size: 14px;
-  line-height: 24px;
-}
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 .remove-btn {
   min-width: 60px;
@@ -221,45 +159,6 @@ input::-webkit-inner-spin-button {
 }
 .title-wrapper {
   align-items: center;
-}
-.add-btn {
-  box-sizing: border-box;
-  color: #01A7FD;
-  text-align: center;
-  margin-bottom: 11px;
-  padding: 8px 18px;
-  border: 2px solid #01A7FD;
-  border-radius: 100px;
-  font-size: 14px;
-  line-height: 24px;
-  background: none;
-}
-.add-btn-label {
-  min-width: 136px;
-}
-.plus-wrapper {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  margin-right: 4px;
-}
-.plus-horizontal {
-  position: relative;
-  top: 11px;
-  left: 4px;
-  height: 2px;
-  width: 16px;
-  background-color: #01A7FD;
-  border-radius: 138.148px;
-}
-.plus-vertical {
-  position: relative;
-  left: 11px;
-  top: 2px;
-  height: 16px;
-  width: 2px;
-  background-color: #01A7FD;
-  border-radius: 138.148px;
 }
 .hidden {
   visibility: hidden;
